@@ -1,0 +1,206 @@
+﻿:root {
+  --bg-body: #f8f9fa;
+  --bg-card: #ffffff;
+  --border: #e2e8f0;
+  --text-main: #2d3748;
+  --text-muted: #718096;
+  --primary: #4299e1;
+  --primary-hover: #3182ce;
+  --success: #48bb78;
+  --error: #f56565;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+body {
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Header */
+.site-header {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 0;
+}
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+.main-nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+.main-nav a {
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 500;
+}
+.main-nav a:hover {
+  color: var(--primary);
+}
+
+/* Buttons */
+button, .btn {
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+.btn-sm {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.875rem;
+}
+
+/* Flash messages */
+.flash-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.flash {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border-left: 4px solid transparent;
+}
+.flash-success {
+  background-color: #ebfbee;
+  border-color: var(--success);
+  color: #2f855a;
+}
+.flash-error {
+  background-color: #fff5f5;
+  border-color: var(--error);
+  color: #c53030;
+}
+.flash-info {
+  background-color: #ebf8ff;
+  border-color: var(--primary);
+  color: #2b6cb0;
+}
+
+/* Cards & sections */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.card-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* Metrics grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+.metric-item {
+  background: #f7fafc;
+  padding: 1rem;
+  border-radius: 8px;
+}
+.metric-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+.metric-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+.profit-positive { color: var(--success); }
+.profit-negative { color: var(--error); }
+
+/* Tables */
+.table-responsive {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+th, td {
+  text-align: left;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover { background-color: #f8fafc; }
+
+/* Forms */
+.form-group { margin-bottom: 1rem; }
+label { display: block; margin-bottom: 0.4rem; font-weight: 500; }
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+/* Footer */
+.site-footer {
+  margin-top: 3rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header-inner { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .main-nav { flex-direction: column; width: 100%; text-align: center; gap: 0.75rem; }
+  .metrics-grid { grid-template-columns: 1fr; }
+}
