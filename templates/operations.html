@@ -1,0 +1,28 @@
+﻿{% extends "base.html" %}
+{% block content %}
+  <h2>Все операции</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Дата</th>
+        <th>Проект</th>
+        <th>Статья</th>
+        <th>Тип</th>
+        <th>Сумма</th>
+        <th>Описание</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for op in operations %}
+        <tr>
+          <td>{{ op['date'] }}</td>
+          <td><a href="{{ url_for('project', pid=op['project_id']) }}">{{ op['project_name'] }}</a></td>
+          <td>{{ op['cat_name'] }}</td>
+          <td>{{ op['cat_type'] }}</td>
+          <td>{{ "{:,.2f}".format(op['amount']) }}</td>
+          <td>{{ op['description'] or '' }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

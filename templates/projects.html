@@ -1,0 +1,75 @@
+﻿{% extends "base.html" %}
+{% block title %}Проекты — Finance Hub{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+      <h2 class="card-title" style="margin:0;">Проекты</h2>
+      <button type="button" class="btn btn-primary"
+              onclick="document.getElementById('new-project-form').style.display='block'; this.style.display='none';">
+        + Добавить проект
+      </button>
+    </div>
+
+    <!-- Форма создания (скрыта по умолчанию) -->
+    <div id="new-project-form" style="display:none; margin-bottom:1.5rem; padding:1rem; background:#f8fafc; border-radius:8px; border:1px solid var(--border);">
+      <form method="post" action="{{ url_for('projects') }}">
+        <div class="form-group">
+          <label>Название проекта</label>
+          <input type="text" name="name" placeholder="Например, «Разработка мобильного приложения»" required>
+        </div>
+        <div class="form-group">
+          <label>Описание</label>
+          <input type="text" name="description" placeholder="Краткое описание проекта">
+        </div>
+        <div style="display:flex; gap:0.75rem;">
+          <button type="submit" class="btn btn-primary">Создать</button>
+          <button type="button" class="btn" style="background:#e2e8f0;"
+                  onclick="document.getElementById('new-project-form').style.display='none';
+                           document.querySelector('button[onclick*=\'new-project-form\']').style.display='inline-block';">
+            Отмена
+          </button>
+        </div>
+      </form>
+    </div>
+
+    {% if projects %}
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Проект</th>
+              <th>Доходы</th>
+              <th>Расходы</th>
+              <th>Прибыль</th>
+              <th>Рентабельность</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in projects %}
+              {% set m = metrics[p['id']] %}
+              <tr>
+                <td>
+                  <a href="{{ url_for('project', pid=p['id']) }}"
+                     style="font-weight:600; color:var(--primary); text-decoration:none;">
+                    {{ p['name'] }}
+                  </a>
+                </td>
+                <td>{{ "{:,.2f}".format(m[0]) }} ₽</td>
+                <td>{{ "{:,.2f}".format(m[1]) }} ₽</td>
+                <td class="{% if m[2] >= 0 %}profit-positive{% else %}profit-negative{% endif %}">
+                  {{ "{:,.2f}".format(m[2]) }} ₽
+                </td>
+                <td>{{ "{:.1f}%".format(m[3]) }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div style="padding:2rem; text-align:center; color:var(--text-muted);">
+        <p>Пока нет проектов. Нажмите «Добавить проект» или синхронизируйте с Bitrix24.</p>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

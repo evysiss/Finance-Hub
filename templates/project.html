@@ -1,0 +1,211 @@
+﻿{% extends "base.html" %}
+{% block title %}{{ project['name'] }} — Finance Hub{% endblock %}
+
+{% block content %}
+  <!-- Карточка проекта -->
+  <div class="card">
+    <h2 class="card-title">{{ project['name'] }}</h2>
+    <p class="text-muted">{{ project['description'] or 'Описание отсутствует' }}</p>
+
+    {% if responsible_name %}
+      <div style="margin-top:0.5rem; padding:0.75rem; background:#f8fafc; border-radius:8px; border:1px solid var(--border);">
+        <span style="color:var(--text-muted); font-size:0.875rem;">Ответственный</span>
+        <strong style="display:block; font-size:1rem; margin-top:0.2rem;">{{ responsible_name }}</strong>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Метрики -->
+  <div class="card">
+    <h3 class="card-title">Метрики проекта</h3>
+    <div class="metrics-grid">
+      <div class="metric-item">
+        <div class="metric-label">Доходы</div>
+        <div class="metric-value">{{ "{:.2f}".format(income) }} ₽</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">Расходы</div>
+        <div class="metric-value">{{ "{:.2f}".format(expense) }} ₽</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">Прибыль</div>
+        <div class="metric-value {% if profit >= 0 %}profit-positive{% else %}profit-negative{% endif %}">
+          {{ "{:.2f}".format(profit) }} ₽
+        </div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">Рентабельность</div>
+        <div class="metric-value">{{ "{:.1f}%".format(rent) }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Операции -->
+  <div class="card">
+    <h3 class="card-title">Операции проекта</h3>
+    <form method="post" action="{{ url_for('add_operation', pid=project['id']) }}" class="form-group">
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:0.75rem;">
+        <div>
+          <label>Статья</label>
+          <select name="category_id" required>
+            {% for c in categories %}
+              <option value="{{ c['id'] }}">{{ c['name'] }} ({{ c['type'] }})</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label>Сумма</label>
+          <input type="number" name="amount" step="0.01" placeholder="0.00" required>
+        </div>
+        <div>
+          <label>Дата</label>
+          <input type="date" name="date">
+        </div>
+        <div>
+          <label>Описание</label>
+          <input type="text" name="description" placeholder="Комментарий">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="margin-top:1rem;">Добавить операцию</button>
+    </form>
+
+    <div class="table-responsive" style="margin-top:1.5rem;">
+      <table>
+        <thead>
+          <tr>
+            <th>Дата</th>
+            <th>Статья</th>
+            <th>Тип</th>
+            <th>Сумма</th>
+            <th>Описание</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for op in operations %}
+            <tr>
+              <td>{{ op['date'] }}</td>
+              <td>{{ op['cat_name'] }}</td>
+              <td>
+                {% if op['cat_type'] == 'income' %}
+                  <span style="color:var(--success)">Доход</span>
+                {% else %}
+                  <span style="color:var(--error)">Расход</span>
+                {% endif %}
+              </td>
+              <td class="{% if op['amount'] >= 0 %}profit-positive{% else %}profit-negative{% endif %}">
+                {{ "{:.2f}".format(op['amount']) }} ₽
+              </td>
+              <td>{{ op['description'] or '' }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5" style="text-align:center; padding:2rem; color:var(--text-muted);">
+                Нет операций
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+	  
+	  <!-- Статьи доходов/расходов -->
+      <div class="card">
+        <h3 class="card-title">Статьи доходов/расходов</h3>
+        <form method="post" action="{{ url_for('add_category') }}" class="form-group">
+          <input type="hidden" name="pid" value="{{ project['id'] }}">
+          <div style="display:flex; gap:0.75rem;">
+            <input type="text" name="name" placeholder="Название статьи (например, «Аренда офиса»)" required>
+            <select name="type">
+              <option value="income">Доход</option>
+              <option value="expense">Расход</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary" style="margin-top:0.75rem;">Добавить статью</button>
+       </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Команда проекта -->
+  <div class="card">
+    <h3 class="card-title">Команда проекта</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Имя</th>
+          <th>Email</th>
+          <th>Роль</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for emp in employees %}
+          <tr>
+            <td>{{ emp['name'] }}</td>
+            <td>{{ emp['email'] or '-' }}</td>
+            <td>
+              {% if emp['role'] == 'руководитель' %}
+                <span style="background:#e0e7ff; padding:0.25rem 0.5rem; border-radius:999px; font-size:0.85rem; color:#2b6cb0;">
+                  Руководитель
+                </span>
+              {% else %}
+                {{ emp['role'] }}
+              {% endif %}
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="3" style="text-align:center; padding:1.5rem; color:var(--text-muted);">
+              Команда пуста
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Формы: создать сотрудника / назначить -->
+    <div style="margin-top:2rem; display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+
+      <!-- Создать сотрудника -->
+      <div class="card" style="padding:1rem; border-width:1px;">
+        <h4 style="margin:0 0 0.75rem 0; font-size:1rem;">Создать сотрудника</h4>
+        <form method="post" action="{{ url_for('add_employee') }}">
+          <input type="hidden" name="pid" value="{{ project['id'] }}">
+          <div class="form-group">
+            <input type="text" name="name" placeholder="Имя сотрудника" required>
+          </div>
+          <div class="form-group">
+            <input type="email" name="email" placeholder="Email (необязательно)">
+          </div>
+          <button type="submit" class="btn btn-primary">Создать</button>
+        </form>
+      </div>
+
+      <!-- Назначить сотрудника на проект -->
+      {% if all_employees %}
+        <div class="card" style="padding:1rem; border-width:1px;">
+          <h4 style="margin:0 0 0.75rem 0; font-size:1rem;">Назначить сотрудника</h4>
+          <form method="post" action="{{ url_for('add_employee_to_project', pid=project['id']) }}">
+            <div class="form-group">
+              <select name="employee_id" required style="width:100%;">
+                {% for emp in all_employees %}
+                  <option value="{{ emp['id'] }}">{{ emp['name'] }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group">
+              <select name="role" style="width:100%;">
+                <option value="участник">Участник</option>
+                <option value="руководитель">Руководитель</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Добавить в проект</button>
+          </form>
+        </div>
+      {% else %}
+        <div class="card" style="padding:1rem; border-width:1px; color:var(--text-muted);">
+          Сначала создайте хотя бы одного сотрудника в форме слева.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
